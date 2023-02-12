@@ -63,7 +63,8 @@ namespace bees {
         std::vector<std::byte> m_data{};
     };
 
-    struct undefined {}; // Deprecated
+    /// Deprecated 
+    struct undefined {};
 
     class object_id {
     public:
@@ -112,8 +113,6 @@ namespace bees {
         std::u8string m_code{};
     };
 
-    // Deprecated
-    struct js_code_w_scope {};
 
     // Deprecated
     struct symbol {
@@ -128,23 +127,9 @@ namespace bees {
 
     struct max_key{};
 
-    using types = std::variant<double, std::u8string, document, array, bin_data,
-    undefined, object_id, bool, utc_datetime, null,
-    regex, db_ptr, js_code, js_code_w_scope, int32_t,
-    symbol, timestamp, int64_t, long double, min_key,
-    max_key>;
+
     
-    class element {
-    public:
-        element();
-        element(types);
-        element& operator=(types);
-        element& operator=(const element& other);
-        const types& data();
-    private:
-        types m_data;
-        std::byte type;
-    };
+
 
     class document {
     public:
@@ -159,7 +144,17 @@ namespace bees {
         int m_size{}; 
     };
 
-    struct array {
+    /// Deprecated
+    class js_code_w_scope {
+    public:
+        
+    private:
+        int32_t m_size = 4;
+        std::u8string m_code{};
+        // std::unordered_map<std::u8string, js_types> m_mappings{};
+    };
+
+    class array {
     public:
         /// Passing a negative number will return m_element_list[m_element_list.size() - key]
         /// Throws if key is greater or equal than m_element_list.size() or if -key is greater than m_element_list.size()
@@ -169,6 +164,23 @@ namespace bees {
     private:
         std::unordered_map<int, element> m_element_list;
     };
-
+    using possible_types = std::variant<double, std::u8string, document, array, bin_data,
+    undefined, object_id, bool, utc_datetime, null,
+    regex, db_ptr, js_code, js_code_w_scope, int32_t,
+    symbol, timestamp, int64_t, long double, min_key,
+    max_key>;
+    
+    class element {
+    public:
+        element();
+        element(possible_types);
+        element& operator=(possible_types);
+        element& operator=(const element& other);
+        const possible_types& data();
+    private:
+        possible_types m_data;
+        std::byte type;
+    };
     document* open(std::u8string_view file_name);
 }
+
