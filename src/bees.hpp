@@ -51,8 +51,8 @@ namespace bees {
     class bin_data {
     public:
         bin_data();
-        bin_data(int32_t size, std::byte subtype, std::vector<std::byte> data);
-        inline bin_data(int32_t size, subtypes subtype, std::vector<std::byte> data);
+        bin_data(const int32_t size, const std::byte subtype, const std::vector<std::byte>& data);
+        inline bin_data(const int32_t size, const subtypes subtype, const std::vector<std::byte>& data);
         int32_t size();
         std::byte& subtype();
         const std::vector<std::byte>& data();
@@ -73,7 +73,7 @@ namespace bees {
         /// @param timestamp Big-endian;
         /// @param random_value Little-endian; must not have a value greater than 2^(5*8)-1.
         /// @param counter Big-endian; must not have a greater value than 2^(3*5)-1.
-        object_id(uint32_t timestamp, uint64_t random_value, uint32_t counter);
+        object_id(const uint32_t timestamp, const uint64_t random_value, const uint32_t counter);
         uint32_t timestamp();
         std::array<unsigned char, 5> random_value();
         std::array<unsigned char, 3> counter();
@@ -83,17 +83,16 @@ namespace bees {
         std::array<unsigned char, 3> m_counter{};
     };
 
-    struct utc_datetime { uint64_t time{}; };
+    struct utc_datetime { uint64_t m_time{}; };
     
     struct null {};
 
     // TODO: This shouldn't be a class just to hold some data. It would be able to be used in strings of texts.
     // But is this even a good idea? I wouldn't want to lock in the user to use my (probably crappy) regex.
     // Regardless, this is something I'll be worrying about later.  
-
     class regex {
     public:
-        regex(std::u8string_view pattern, std::set<char8_t> options);
+        regex(const std::u8string_view& pattern, const std::set<char8_t>& options);
     private:
         // m_regex{};
     };
@@ -127,18 +126,14 @@ namespace bees {
 
     struct max_key{};
 
-
-    
-
-
     class document {
     public:
         document(std::unordered_map<std::u8string_view, element>);
         /// If the key does not exist, a new key, mapping to a null, will be inserted
         /// Throws if inserting an element would cause an integer overflow
-        element& operator[](std::u8string_view key);
+        element& operator[](const std::u8string_view& key);
         /// Throws if the key was not found
-        const element& at(std::u8string_view key) const;
+        const element& at(const std::u8string_view& key) const;
     private:
         std::unordered_map<std::u8string, element> m_element_list;
         int m_size{}; 
@@ -158,9 +153,10 @@ namespace bees {
     public:
         /// Passing a negative number will return m_element_list[m_element_list.size() - key]
         /// Throws if key is greater or equal than m_element_list.size() or if -key is greater than m_element_list.size()
-        element& operator[](int key);
+        /// Throws if the key was not found
+        element& operator[](const int key);
         
-        const element& at(int key) const;
+        const element& at(const int key) const;
     private:
         std::unordered_map<int, element> m_element_list;
     };
