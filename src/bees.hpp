@@ -142,7 +142,7 @@ namespace bees {
     /// Deprecated
     class js_code_w_scope {
     public:
-        
+        js_code_w_scope();
     private:
         int32_t m_size = 4;
         std::u8string m_code{};
@@ -169,8 +169,8 @@ namespace bees {
     class element {
     public:
         element();
-        element(possible_types);
-        element& operator=(possible_types);
+        element(const possible_types&);
+        element& operator=(const possible_types& other);
         element& operator=(const element& other);
         const possible_types& data();
     private:
